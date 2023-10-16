@@ -57,7 +57,7 @@ func ListComics(c *gin.Context) {
 
 	var comics []entity.Comic
 
-	if err := entity.DB().Raw("SELECT * FROM baskets").Scan(&comics).Error; err != nil {
+	if err := entity.DB().Raw("SELECT * FROM comics").Scan(&comics).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

@@ -7,14 +7,24 @@ import type { ColumnsType } from 'antd/es/table';
 import { Basket } from "../interfaces/basket";
 import { Comic } from "../interfaces/comic";
 import { Member } from "../interfaces/member";
-import { DeleteComicFromBasket, GetBasketByMember } from "../services/https";
+import { DeleteComicFromBasket, GetBasketByMember, GetComic, ListComics } from "../services/https";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 function Cart() {
 
-  // const [comicList, setComicList] = useState<Comic[]>([]);
+  const [comicList, setComicList] = useState<Comic[]>([]);
+  const [BasketList, setBasketList] = useState<Comic[]>(() => {
+    const savedBasket = localStorage.getItem("basket")
+    if (savedBasket) {
+      return JSON.parse(savedBasket);
+    }
+    else {
+      return [];
+    }
+  })
 
+  // จำลองผู่้ใช้งาน
   const Member1: Member = {
     ID: 1,
     Email: "Test@gmail.com",
@@ -76,6 +86,7 @@ const handleOk = async () => {
     console.log("Failed")
     setOpen(false);
   }
+  const remove = 
   setConfirmLoading(false);
 };
 
@@ -86,20 +97,32 @@ const handleOk = async () => {
 //   if (res)
 // }
 
+const GetBasketbyMem = async () => {
+  let res = await GetBasketByMember(Member1);
+  if (res) {
+    console.log(res)
+    setBasketData(res);
+  }
+}
+
+const getComicList = async () => {
+  let res = await ListComics();
+  if (res) {
+    setComicList(res);
+  }
+}
+
+
+
 const handleCancel = () => {
   setOpen(false);
 }
 
 useEffect(() => {
-  const GetBasketbyMem = async () => {
-    let res = await GetBasketByMember(Member1);
-    if (res) {
-      console.log(res)
-      setBasketData(res);
-    }
-  }
   GetBasketbyMem();
-}, []);
+  getComicList();
+  localStorage.setItem('basket', JSON.stringify(BasketList))
+}, [BasketList]);
 
   return (
     <>
@@ -122,17 +145,21 @@ useEffect(() => {
               <Table 
                 rowKey="ID"
                 columns={Columns} 
-                dataSource={basketData}
+                dataSource={comicList}
                 pagination={false}
                 scroll={{ x: 1500, y: 750}}
-                summary={ () => {
+                summary={ (data) => {
+                  let total = 0
+                  data.forEach(({ Price }) => {
+                    total += Price;
+                  });
                   return (
                     <>
                       <Table.Summary.Row>
-                        <Table.Summary.Cell index={0}> Total </Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}> </Table.Summary.Cell>
+                        <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                        <Table.Summary.Cell index={1}> Total </Table.Summary.Cell>
                         <Table.Summary.Cell index={2}>
-                          {/* <Text type="danger"> { basketData.Total } </Text> */}
+                          { <Text type="danger"> { total } </Text> }
                         </Table.Summary.Cell>
                       </Table.Summary.Row>
                     </>

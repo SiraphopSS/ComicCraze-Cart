@@ -28,9 +28,9 @@ func main() {
 	// Basket
 	r.GET("/baskets", controller.ListBaskets)
 	r.GET("/baskets/:id", controller.GetBaskets)
-	r.POST("/baskets/:id", controller.CreateBaskets)
+	r.POST("/baskets", controller.CreateBaskets)
+	r.PATCH("/baskets", controller.UpdateBasket)
 	r.DELETE("/baskets/:id", controller.DeleteBaskets)
-	r.DELETE("/baskets/:id/:cid", controller.DeleteFromBasket)
 	// ============
 	r.Run()
 }

@@ -21,18 +21,17 @@ func CreateBaskets(c *gin.Context) {
 	}
 
 	if tx := entity.DB().Where("id = ?", basket.MemberID).First(&member); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "member not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"Create error": "member not found"})
 		return
 	}
 
 	if tx := entity.DB().Where("id = ?", basket.ComicID).First(&comic); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "comic not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"Create error": "comic not found"})
 		return
 	}
 
 	b := entity.Basket{
 		Member: member,
-		Comic:  comic,
 		Total:  basket.Total,
 	}
 
@@ -53,7 +52,7 @@ func GetBaskets(c *gin.Context) {
 
 	id := c.Param("id")
 
-	if err := entity.DB().Preload("Member", "Comic").Raw("SELECT * FROM baskets WHERE member_id = ?", id).Scan(&basket).Error; err != nil {
+	if err := entity.DB().Preload("Member").Preload("Comic").Raw("SELECT * FROM baskets WHERE member_id = ?", id).Scan(&basket).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -68,7 +67,7 @@ func ListBaskets(c *gin.Context) {
 
 	var baskets []entity.Basket
 
-	if err := entity.DB().Raw("SELECT * FROM baskets").Scan(&baskets).Error; err != nil {
+	if err := entity.DB().Preload("Member").Preload("Comic").Raw("SELECT * FROM baskets").Scan(&baskets).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -92,14 +91,22 @@ func DeleteBaskets(c *gin.Context) {
 
 }
 
-func DeleteFromBasket(c *gin.Context) {
-	id := c.Param("id")
-	cid := c.Param("cid")
+func UpdateBasket(c *gin.Context) {
+	var basket entity.Basket
 
-	if tx := entity.DB().Exec("DELETE FROM baskets WHERE member_id = ? and comic_id = ?", id, cid); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "comics not found"})
+	if err := c.ShouldBindJSON(&basket); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// ค้นหา review ด้วย id
+	if tx := entity.DB().Where("id = ?", basket.ID).First(&basket); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "review not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"data": id})
+	if err := entity.DB().Save(&basket).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"data": basket})
 }

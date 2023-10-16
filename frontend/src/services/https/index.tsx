@@ -46,7 +46,7 @@ async function ListComics() {
         return res;
 }
 
-async function GetComicById(id: Number | undefined) {
+async function GetComic(id: Number | undefined) {
   const requestOptions = {
     method: "GET"
   };
@@ -181,7 +181,7 @@ async function CreateBasket(data: Basket) {
     return res;
 }
 
-async function GetBaskets(member: Member) {
+async function GetBaskets() {
     const requestOptions = {
         method: "GET",
         headers: {
@@ -189,7 +189,7 @@ async function GetBaskets(member: Member) {
         },
     };
 
-    let res = await fetch(`${apiUrl}/baskets/${member.ID}`, requestOptions)
+    let res = await fetch(`${apiUrl}/baskets`, requestOptions)
         .then((response) => response.json())
         .then((res) => {
             if (res.data) {
@@ -279,7 +279,7 @@ async function GetTotal(id: number | undefined, val: Basket) {
 export {
     CreateComic,
     ListComics,
-    GetComicById,
+    GetComic,
     DeleteComicsByID,
 
     CreateMember,

@@ -34,9 +34,9 @@ const Products = () => {
 
   const Member1: Member = {
     ID: 1,
-    Email: "Test@gmail.com",
-    Username : "TestSubject",
-    Password : "1234"
+    Email: "nongfun@gmail.com",
+    Username : "NongFun",
+    Password : "nongfun08"
   }
 
   const Columns: ColumnsType<Comic> = [
@@ -109,7 +109,6 @@ const Products = () => {
   const getComicList = async () => {
     let res = await ListComics();
     if (res) {
-      console.log(res)
       setComicList(res);
     }
   }
