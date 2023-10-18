@@ -20,7 +20,7 @@ const Products = () => {
   // const navigate = useNavigate();
 
   const [BasketList, setBasketList] = useState<Comic[]>(() => {
-    const savedBasket = localStorage.getItem("basket")
+    const savedBasket = localStorage.getItem("baskets")
     if (savedBasket) {
       return JSON.parse(savedBasket);
     }
@@ -75,7 +75,7 @@ const Products = () => {
     setBasketList([
       ...BasketList,
       {
-        ID: BasketList.length + 1,
+        ID: c.ID,
         CategoryID: c.CategoryID,
         AdminID: c.AdminID,
         Image: c.Image,
@@ -87,25 +87,6 @@ const Products = () => {
     ])
   }
 
-  // const AddtoBasket = async (cid: Basket) => {
-  //   let res = await CreateBasket(cid)
-  //   if (res){
-  //     messageApi.open({
-  //       type: "success",
-  //       content: "บันทึกข้อมูลสำเร็จ",
-  //     });
-  //     setTimeout(function () {
-  //       navigate("/Products");
-  //     }, 2000);
-  //   }
-  //   else {
-  //     messageApi.open({
-  //       type: "error",
-  //       content: "บันทึกข้อมูลไม่สำเร็จ",
-  //     });
-  //   }
-  // }
-
   const getComicList = async () => {
     let res = await ListComics();
     if (res) {
@@ -115,7 +96,7 @@ const Products = () => {
 
   useEffect(() => {
     getComicList();
-    localStorage.setItem('basket', JSON.stringify(BasketList))
+    localStorage.setItem('baskets', JSON.stringify(BasketList))
   }, [BasketList]);
 
   return (
@@ -149,15 +130,4 @@ const Products = () => {
   );
 };
 
-// const Counter = () => {
-//   const [count, setCount] = useState(0);
-//   return (
-//     <div>
-//       <h3>{count}</h3>
-//       <button onClick={() => setCount(count + 1)}>+</button>
-//       <button onClick={() => setCount(count - 1)}>-</button>
-//       <button onClick={() => setCount(0)}>Clear</button>
-//     </div>
-//   );
-// };
 export default Products;

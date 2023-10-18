@@ -13,17 +13,6 @@ const { Title, Text } = Typography;
 
 function Cart() {
 
-  const [comicList, setComicList] = useState<Comic[]>([]);
-  const [BasketList, setBasketList] = useState<Comic[]>(() => {
-    const savedBasket = localStorage.getItem("basket")
-    if (savedBasket) {
-      return JSON.parse(savedBasket);
-    }
-    else {
-      return [];
-    }
-  })
-
   // จำลองผู่้ใช้งาน
   const Member1: Member = {
     ID: 1,
@@ -38,7 +27,7 @@ const Columns: ColumnsType<Comic> = [
     title: "",
     dataIndex: "Image",
     width: 100,
-    render: (text, record, index) => (
+    render: (record) => (
       <img src={record.Image} className="w3-left w3-circle w3-margin-right" style={{ width: '100%' }} />
     )
   },
@@ -57,52 +46,37 @@ const Columns: ColumnsType<Comic> = [
     key: "operation",
     fixed: 'right',
     width: 50,
-    render: (text, record, index) => 
-    <button type="button" onClick={() => RemoveFromBasket(record)}>
+    render: (record) => 
+    <button type="button" onClick={() => RemoveFromBasket(record.ID)}>
       Remove
     </button>
   }
 ]
 
-const [basketData, setBasketData] = useState<Basket[]>([]);
-const [comicID, setComicID] = useState<number>();
-const [open, setOpen] = useState(false);
-const [confirmLoading, setConfirmLoading] = useState(false);
+const [comicList, setComicList] = useState<Comic[]>([]);
+const [BasketList, setBasketList] = useState<Comic[]>(() => {
+  const savedBasket = localStorage.getItem("baskets")
+    if (savedBasket) {
+      return JSON.parse(savedBasket);
+    }
+    else {
+      return [];
+    }
+})
+
+// const [comicID, setComicID] = useState<number>(0);
 // const [messageAPI] = message.useMessage();
 
-const RemoveFromBasket = (cid: Comic) => {
-  setComicID(cid.ID)
-  setOpen(true);
+const RemoveFromBasket = (cid: number) => {
+  removeComic(cid);
+  
 }
 
-const handleOk = async () => {
-  setConfirmLoading(true);
-  let res = await DeleteComicFromBasket(Member1, comicID);
-  if (res) {
-    console.log("Success")
-    setOpen(false);
-  }
-  else {
-    console.log("Failed")
-    setOpen(false);
-  }
-  const remove = 
-  setConfirmLoading(false);
-};
-
-
-
-// const getComicList = async () => {
-//   let res = await ListComic()
-//   if (res)
-// }
-
-const GetBasketbyMem = async () => {
-  let res = await GetBasketByMember(Member1);
-  if (res) {
-    console.log(res)
-    setBasketData(res);
-  }
+const removeComic = (id: number) => {
+  const newList = BasketList.filter((item) => {
+    return item.ID !== id
+  })
+  setBasketList(newList);
 }
 
 const getComicList = async () => {
@@ -113,15 +87,9 @@ const getComicList = async () => {
 }
 
 
-
-const handleCancel = () => {
-  setOpen(false);
-}
-
 useEffect(() => {
-  GetBasketbyMem();
   getComicList();
-  localStorage.setItem('basket', JSON.stringify(BasketList))
+  localStorage.setItem('baskets', JSON.stringify(BasketList))
 }, [BasketList]);
 
   return (
@@ -166,13 +134,6 @@ useEffect(() => {
                   );
                 }}
               />
-              <Modal
-                title="ลบข้อมูล ?"
-                open={open}
-                onOk={handleOk}
-                confirmLoading={confirmLoading}
-                onCancel={handleCancel}
-              ></Modal>
             </Col>
           </Row>
           <Row>
