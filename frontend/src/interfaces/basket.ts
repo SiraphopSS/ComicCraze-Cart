@@ -3,7 +3,12 @@ import { Comic } from "./comic";
 
 export interface Basket {
     ID?: number;
-    MemberID? : Member;
-    ComicID? : Comic;
+
+    MemberID? : number;
+    Member?: Member
+
+    ComicID? : number;
+    Comic?: Comic
+
     Total? : number;
 }

@@ -45,7 +45,7 @@ const Products = () => {
       title: "",
       dataIndex: "Image",
       width: 100,
-      render: (text, record, index) => (
+      render: (record) => (
         <img src={record.Image} className="w3-left w3-circle w3-margin-right" style={{ width: '100%' }} />
       )
     },
@@ -64,7 +64,7 @@ const Products = () => {
       key: "operation",
       fixed: 'right',
       width: 50,
-      render: (text, record, index) => 
+      render: (record) => 
       <button type="button" onClick={() => AddtoBasket(Member1, record)}>
         Add
       </button>
@@ -81,7 +81,7 @@ const Products = () => {
         Image: c.Image,
         Title: c.Title,
         Description: c.Description,
-        Link: c.Link,
+        Url: c.Url,
         Price: c.Price
       }
     ])

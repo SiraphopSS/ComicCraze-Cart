@@ -13,5 +13,5 @@ type Basket struct {
 	ComicID *uint
 	Comic   Comic `gorm:"foreignKey:ComicID"`
 
-	Total float32
+	Total float64
 }

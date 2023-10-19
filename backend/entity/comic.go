@@ -6,13 +6,15 @@ import (
 
 type Comic struct {
 	gorm.Model
-	CategoryID  int
-	AdminID     int
-	Image       string
+
+	CategoryID int
+	AdminID    int
+
+	Image       string `gorm:"type:longtext"`
 	Title       string
 	Description string
-	Link        string
-	Price       float32
+	Url         string
+	Price       float64
 
 	Baskets []Basket `gorm:"foreignKey:ComicID"`
 }

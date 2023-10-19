@@ -7,7 +7,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { Basket } from "../interfaces/basket";
 import { Comic } from "../interfaces/comic";
 import { Member } from "../interfaces/member";
-import { DeleteComicFromBasket, GetBasketByMember, GetComic, ListComics } from "../services/https";
+import {  GetComic, ListComics } from "../services/https";
 
 const { Title, Text } = Typography;
 
@@ -53,6 +53,7 @@ const Columns: ColumnsType<Comic> = [
   }
 ]
 
+const [Total, setTotal]= useState(0);
 const [comicList, setComicList] = useState<Comic[]>([]);
 const [BasketList, setBasketList] = useState<Comic[]>(() => {
   const savedBasket = localStorage.getItem("baskets")
